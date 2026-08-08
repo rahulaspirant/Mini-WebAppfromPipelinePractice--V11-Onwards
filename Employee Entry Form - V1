@@ -1,0 +1,102 @@
+function doGet() {
+  return HtmlService
+    .createHtmlOutputFromFile("index");
+}
+
+
+function saveEmployee(employee) {
+
+  const row = [
+    employee.employeeId,
+    employee.name,
+    employee.department,
+    employee.designation,
+    employee.salary
+  ];
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet()
+    .getSheetByName("Employee Data");
+
+  const nextRow = sheet.getLastRow() + 1;
+
+  sheet.getRange(nextRow, 1, 1, row.length)
+       .setValues([row]);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Employee Entry</title>
+</head>
+
+<body>
+
+  <h2>Employee Entry</h2>
+
+  <form id="employeeForm">
+
+    <label>Employee ID</label>
+    <input type="text" id="employeeId">
+
+    <br><br>
+
+    <label>Name</label>
+    <input type="text" id="name">
+
+    <br><br>
+
+    <label>Department</label>
+    <input type="text" id="department">
+
+    <br><br>
+
+    <label>Designation</label>
+    <input type="text" id="designation">
+
+    <br><br>
+
+    <label>Salary</label>
+    <input type="number" id="salary">
+
+    <br><br>
+
+    <button type="submit">Save Employee</button>
+
+  </form>
+
+
+  <script>
+
+    document
+      .getElementById("employeeForm")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const employee = {
+          employeeId: document.getElementById("employeeId").value,
+          name: document.getElementById("name").value,
+          department: document.getElementById("department").value,
+          designation: document.getElementById("designation").value,
+          salary: document.getElementById("salary").value
+        };
+
+        console.log(employee);
+        google.script.run.saveEmployee(employee);
+
+      });
+
+  </script>
+
+</body>
+
+</html>
+
+
+
+
