@@ -1,0 +1,163 @@
+function doGet() {
+  return HtmlService
+    .createHtmlOutputFromFile("index");
+}
+
+
+
+function saveEmployee(employee) {
+  console.log("Received employee:", employee);
+
+    console.log("SAVE EMPLOYEE CALLED");
+    console.log(employee);
+
+  // if (!employee) {
+  //   throw new Error("Employee data is missing or undefined.");
+  // }
+
+  const row = [
+    employee.employeeId,
+    employee.name,
+    employee.department,
+    employee.designation,
+    employee.salary
+  ];
+
+  const sheet = SpreadsheetApp
+    .getActiveSpreadsheet()
+    .getSheetByName("Employee Data");
+
+  // V4: read existing employees
+  const rows = sheet
+    .getRange(1, 1, sheet.getLastRow(), sheet.getLastColumn())
+    .getValues();
+
+  // V4: build identity lookup
+  const employeeIdSet = buildEmployeeIdSet(rows);
+
+
+
+  // Log all existing employee IDs for debugging
+  console.log("Existing Employee IDs:", Array.from(employeeIdSet));
+  console.log("New Employee ID:", employee.employeeId);
+
+  // V4: check identity
+  const duplicate = isDuplicate(
+    employee.employeeId,
+    employeeIdSet
+  );
+
+  console.log("Is duplicate:", duplicate);
+
+  // Existing V2 execution
+  const nextRow = sheet.getLastRow() + 1;
+
+  sheet
+    .getRange(nextRow, 1, 1, row.length)
+    .setValues([row]);
+ }
+
+
+
+
+function readEmployees() {
+  const sht = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Employee Data");
+  const data = sht.getRange(1,1,sht.getLastRow(),sht.getLastColumn()).getValues();
+  
+}
+
+function getEmployeeId(row) {
+  return row[0];
+}
+
+function buildEmployeeIdSet(rows) {
+  const ids = rows.map(row => row[0]);
+  return new Set(ids);
+}
+
+function isDuplicate(employeeId, employeeIdSet) {
+  return employeeIdSet.has(employeeId);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Employee Entry</title>
+</head>
+
+<body>
+
+  <h2>Employee Entry</h2>
+
+  <form id="employeeForm">
+
+    <label>Employee ID</label>
+    <input type="text" id="employeeId">
+
+    <br><br>
+
+    <label>Name</label>
+    <input type="text" id="name">
+
+    <br><br>
+
+    <label>Department</label>
+    <input type="text" id="department">
+
+    <br><br>
+
+    <label>Designation</label>
+    <input type="text" id="designation">
+
+    <br><br>
+
+    <label>Salary</label>
+    <input type="number" id="salary">
+
+    <br><br>
+
+    <button type="submit">Save Employee</button>
+
+  </form>
+
+
+  <script>
+
+    document
+      .getElementById("employeeForm")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const employee = {
+          employeeId: document.getElementById("employeeId").value,
+          name: document.getElementById("name").value,
+          department: document.getElementById("department").value,
+          designation: document.getElementById("designation").value,
+          salary: document.getElementById("salary").value
+        };
+      
+        google.script.run.saveEmployee(employee);
+
+                
+      });
+
+       google.script.run
+      .withSuccessHandler(function(data) {
+      console.log(data);
+      })
+      .readEmployees();
+
+  </script>
+
+</body>
+
+</html>
+
+
+
