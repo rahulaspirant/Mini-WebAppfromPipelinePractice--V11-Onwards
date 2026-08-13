@@ -42,10 +42,8 @@ function saveEmployee(employee) {
   console.log("New Employee ID:", employee.employeeId);
 
   // V4: check identity
-  const duplicate = isDuplicate(
-    employee.employeeId,
-    employeeIdSet
-  );
+  const duplicate = isDuplicate(employee.employeeId,employeeIdSet);  //comparison :- employee.employeeID is from new record 
+  and employeeIdSet is from existing records
 
   console.log("Is duplicate:", duplicate);
 
