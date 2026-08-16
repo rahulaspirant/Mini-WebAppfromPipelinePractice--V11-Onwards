@@ -79,3 +79,85 @@ function increaseSalary(rows) {   //not called in Main function till V6.
     return newRow;
   });
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Employee Entry</title>
+</head>
+
+<body>
+
+  <h2>Employee Entry</h2>
+
+  <form id="employeeForm">
+
+    <label>Employee ID</label>
+    <input type="text" id="employeeId">
+
+    <br><br>
+
+    <label>Name</label>
+    <input type="text" id="name">
+
+    <br><br>
+
+    <label>Department</label>
+    <input type="text" id="department">
+
+    <br><br>
+
+    <label>Designation</label>
+    <input type="text" id="designation">
+
+    <br><br>
+
+    <label>Salary</label>
+    <input type="number" id="salary">
+
+    <br><br>
+
+    <button type="submit">Save Employee</button>
+
+  </form>
+
+
+  <script>
+
+    document
+      .getElementById("employeeForm")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const employee = {
+          employeeId: document.getElementById("employeeId").value,
+          name: document.getElementById("name").value,
+          department: document.getElementById("department").value,
+          designation: document.getElementById("designation").value,
+          salary: document.getElementById("salary").value
+        };
+      
+        google.script.run.saveEmployee(employee);
+
+                
+      });
+
+       google.script.run
+      .withSuccessHandler(function(data) {
+      console.log(data);
+      })
+      .readEmployees();
+
+  </script>
+
+</body>
+
+</html>
+
+
+
+
