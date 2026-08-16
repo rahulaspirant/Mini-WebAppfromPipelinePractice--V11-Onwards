@@ -1,0 +1,81 @@
+function doGet() {
+  return HtmlService
+    .createHtmlOutputFromFile("index");
+}
+
+
+function saveEmployee(employee) {
+  console.log("Received employee:", employee);
+
+  const row = [    //form response
+    employee.employeeId,
+    employee.name,
+    employee.department,
+    employee.designation,
+    employee.salary
+  ];
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Employee Data");  //from sheet
+  const rows = sheet.getRange(1, 1, sheet.getLastRow(), sheet.getLastColumn()).getValues();
+  
+  const itEmployees = getITEmployees(rows);
+  console.log("IT Employees:", itEmployees);
+  
+  const transformedRows = increaseSalary(itEmployees);
+
+// build identity lookup from existing rows
+  const employeeIdSet = buildEmployeeIdSet(rows);  //sheet rows
+
+
+// check identity
+  const duplicate = isDuplicate(employee.employeeId,employeeIdSet);  //comparison
+
+  console.log("Is duplicate:", duplicate);
+
+  const nextRow = sheet.getLastRow() + 1;
+
+  sheet
+    .getRange(nextRow, 1, 1, row.length)
+    .setValues([row]);
+ }
+
+
+
+
+function readEmployees() {
+  const sht = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Employee Data");
+  const data = sht.getRange(1,1,sht.getLastRow(),sht.getLastColumn()).getValues();
+  return data  
+}
+
+function getEmployeeId(row) {   //not called in Main function till V6.
+  return row[0];
+}
+
+function buildEmployeeIdSet(rows) {
+  const ids = rows.map(row => row[0]);
+  return new Set(ids);
+}
+
+function isDuplicate(employeeId, employeeIdSet) {
+  console.log("Checking ID:", employeeId, "Type:", typeof employeeId);
+  console.log("Set contents:", Array.from(employeeIdSet).map((id, i) => `[${i}]: ${id} (${typeof id})`));
+  return employeeIdSet.has(employeeId);
+}
+
+function getITEmployees(rows) {
+  return rows.filter(row => row[2] === "IT" && row[4] > 50000);
+}
+
+
+function increaseSalary(rows) {   //not called in Main function till V6.
+
+  return rows.map(row => {
+
+    const newRow = [...row];
+
+    newRow[4] = newRow[4] * 1.10;
+
+    return newRow;
+  });
+}
